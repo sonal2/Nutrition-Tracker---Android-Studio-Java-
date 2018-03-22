@@ -1,0 +1,578 @@
+Diary Class
+
+
+package com.example.emily.a362first;
+
+
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.ScrollingTabContainerView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import static android.R.id.content;
+
+public class Diary extends AppCompatActivity {
+
+
+
+    // static ListView lv;
+    static ArrayList<Log> log = new ArrayList<Log>();
+    static ArrayList<TextView> t = new ArrayList<TextView>();
+
+    static ArrayList<String> arrayList;// = new ArrayList<String>();
+    static ArrayAdapter<String> adapter;
+
+    static ArrayList<Integer> arrayList2;
+    static ArrayAdapter<Integer> adapter2;
+
+
+    //-------------Date-------------
+    static ArrayList<String> arrayList3;
+    static ArrayAdapter<String> adapter3;
+
+
+
+    static int i = 0;
+    static boolean test = false;
+    static String food2;
+    static int cal2;
+    static String date2;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_diary);
+
+
+
+
+        /*if(test == false)
+        {
+            ListView lv = (ListView) findViewById(R.id.listView);
+            arrayList = new ArrayList<String>();
+
+            ListView lv2 = (ListView) findViewById(R.id.ListCal);
+            arrayList2 = new ArrayList<Integer>();
+
+
+            adapter = new ArrayAdapter<String>(Diary.this, android.R.layout.simple_list_item_1, arrayList);
+            lv.setAdapter(adapter);
+
+            adapter2 = new ArrayAdapter<Integer>(Diary.this, android.R.layout.simple_list_item_1, arrayList2);
+            lv2.setAdapter(adapter2);
+
+            test = true;
+        }*/
+    /*}
+
+    //@Override
+    public void OnResume(Bundle savedInstanceState)
+    {
+        super.onResume();*/
+        Intent intent = getIntent();
+        String main = intent.getStringExtra("Main");
+
+        //if(test == false)
+        //{
+        ListView lv = (ListView) findViewById(R.id.listview);
+        arrayList = new ArrayList<String>();
+
+        ListView lv2 = (ListView) findViewById(R.id.ListCal);
+        arrayList2 = new ArrayList<Integer>();
+
+        //------------Date-----------------
+        ListView lv3 = (ListView) findViewById(R.id.ListDate);
+        arrayList3 = new ArrayList<String>();
+
+
+        try {
+            File dir = getFilesDir();
+            File diary = new File(getFilesDir(), "foodDiary.txt");
+
+
+
+
+
+            Scanner in = new Scanner(diary).useDelimiter("//s*@@@//s");
+            int index = 0;
+            while (in.hasNext()) {
+                arrayList.add(index, in.next());
+                arrayList2.add(index, in.nextInt());
+                arrayList3.add(index, in.next());
+
+                index++;
+            }
+
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+
+
+        }
+
+
+
+        //-------------------
+
+        adapter = new ArrayAdapter<String>(Diary.this, android.R.layout.simple_list_item_1, arrayList);
+        lv.setAdapter(adapter);
+
+        adapter2 = new ArrayAdapter<Integer>(Diary.this, android.R.layout.simple_list_item_1, arrayList2);
+        lv2.setAdapter(adapter2);
+
+        //------------Date-------------
+        adapter3 = new ArrayAdapter<String>(Diary.this, android.R.layout.simple_list_item_1, arrayList3);
+        lv3.setAdapter(adapter3);
+        //------------------------------
+
+
+
+
+
+        test = true;
+        //}
+
+        //test = true;
+
+        /*ListView lv = (ListView) findViewById(R.id.listView);
+        arrayList = new ArrayList<String>();
+
+        ListView lv2 = (ListView) findViewById(R.id.ListCal);
+        arrayList2 = new ArrayList<Integer>();
+
+
+        adapter = new ArrayAdapter<String>(Diary.this, android.R.layout.simple_list_item_1, arrayList);
+        lv.setAdapter(adapter);
+
+        adapter2 = new ArrayAdapter<Integer>(Diary.this, android.R.layout.simple_list_item_1, arrayList2);
+        lv2.setAdapter(adapter2);*/
+
+        if(main.equals("yes"))// "yes");// "yes")) {
+        {
+            /*if(test == false) {
+                test = true;
+                ListView lv = (ListView) findViewById(R.id.listView);
+                arrayList = new ArrayList<String>();
+
+                adapter = new ArrayAdapter<String>(Diary.this, android.R.layout.simple_list_item_1, arrayList);
+                lv.setAdapter(adapter);
+                Toast toast = Toast.makeText(getApplicationContext(), "Value: " + test, Toast.LENGTH_SHORT);
+                toast.show();
+            }*/
+
+            //lv.setAdapter(adapter);
+
+            String foodName = intent.getStringExtra("Food");
+            int Calories = intent.getIntExtra("Calories", 0);
+            //-----------Date------------
+            String Date = intent.getStringExtra("Date");
+            //------------------------------
+            int count = intent.getIntExtra("Count", 0);
+
+            Log newLog = new Log(foodName, Calories);
+
+            Toast toast = Toast.makeText(getApplicationContext(), "The values are: " + newLog.getFood() + " " + newLog.getCal() + " " + newLog.getLogs(), Toast.LENGTH_LONG);
+            toast.show();
+        }
+    }
+
+    public void Back(View view)
+    {
+        Intent intent = new Intent(this, MainActivity.class); //changed from home
+        setResult(Diary.RESULT_CANCELED, intent);
+        finish();
+    }
+
+
+    public void AddItem(View view)
+    {
+        Intent intent = new Intent(this, FoodEntry.class);
+        startActivityForResult(intent, 1); //1 is the request code
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        switch (requestCode) {
+            case 1:
+                if (resultCode == Activity.RESULT_OK) {
+                    food2 = FoodEntry.getString(data);
+                    cal2 = FoodEntry.getInt(data);
+                    date2 = FoodEntry.getDate(data);
+
+                    arrayList.add(food2);
+                    adapter.notifyDataSetChanged();
+
+
+                    arrayList2.add(cal2);
+                    adapter2.notifyDataSetChanged();
+
+                    //---------Date--------------
+                    arrayList3.add(date2);
+                    adapter3.notifyDataSetChanged();
+                    //------------------------
+
+
+                    String filename = "fooddiary.txt";
+                    FileOutputStream fos;
+
+                    try
+                    {
+                        fos = openFileOutput(filename, Context.MODE_APPEND);
+                        fos.write(food2.getBytes());
+                        fos.write(cal2);
+                        fos.write(date2.getBytes());
+                        fos.close();
+                    }
+                    catch(IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                if(resultCode == Activity.RESULT_CANCELED)
+                {
+
+                }
+        }
+    }
+    public void AddList(String food, int Cal)
+    {
+
+        //lv = (ListView)findViewById(R.id.listView);
+        //arrayList = new ArrayList<String>();
+        //adapter = new ArrayAdapter<String>(Diary.this, android.R.layout.simple_list_item_1, arrayList);
+        //lv.setAdapter(adapter);
+        //arrayList.add(food);
+        //adapter.notifyDataSetChanged();
+
+    }
+}
+
+
+
+Activity_diary.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/myRelativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.emily.a362first.Diary"
+    android:weightSum="1">
+
+    <RelativeLayout
+        android:layout_width="62dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.25">
+
+        <Button
+            android:text="Back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button3"
+            android:layout_weight="1"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:onClick="Back" />
+
+        <Button
+            android:text="Add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button2"
+            android:layout_weight="1"
+            android:layout_above="@+id/button3"
+            android:layout_alignParentStart="true"
+            android:onClick="AddItem" />
+
+        <TextView
+            android:text="Calories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView6"
+            android:layout_alignParentStart="true"
+            android:id="@+id/textView7"
+            android:textSize="20sp" />
+
+        <TextView
+            android:text="Date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView7"
+            android:layout_alignParentStart="true"
+            android:id="@+id/textView8"
+            android:textSize="20sp" />
+
+        <TextView
+            android:text="Food"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView6"
+            android:textSize="20sp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+
+
+    </RelativeLayout>
+
+
+
+    <ListView
+        android:layout_width="82dp"
+        android:layout_height="481dp"
+        android:id="@+id/listview"
+        android:layout_weight="0.28" />
+
+    <ListView
+        android:layout_width="62dp"
+        android:layout_height="match_parent"
+        android:id="@+id/ListCal"
+        android:layout_weight="0.38" />
+
+    <ListView
+        android:layout_width="77dp"
+        android:layout_height="match_parent"
+        android:id="@+id/ListDate"
+        android:layout_weight="0.70" />
+
+
+</LinearLayout>
+
+
+
+Food Entry 
+
+package com.example.emily.a362first;
+
+        import android.content.Context;
+        import android.content.Intent;
+        import android.support.v7.app.AppCompatActivity;
+        import android.os.Bundle;
+        import android.view.View;
+        import android.widget.EditText;
+        import android.widget.Toast;
+
+        import java.io.FileOutputStream;
+        import java.io.IOException;
+        import java.util.ArrayList;
+
+public class FoodEntry extends AppCompatActivity {
+
+
+    public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_food_entry);
+
+        Intent intent = getIntent();
+    }
+
+    public void SaveData(View view) {
+        EditText Food = (EditText) findViewById(R.id.editText);
+        String food = Food.getText().toString();
+
+        EditText Cal = (EditText) findViewById(R.id.editText2);
+        String cal = Cal.getText().toString();
+        int calories = Integer.parseInt(cal);
+
+
+        //------Date------------
+        EditText Date = (EditText) findViewById(R.id.editText3);
+        String date = Date.getText().toString();
+
+
+        //Toast toast = Toast.makeText(getApplicationContext(), "The values are: " + newLog.getFood() + " " + newLog.getCal() + " " + newLog.getLogs(), Toast.LENGTH_LONG);
+        //toast.show();
+        int num = 1;
+
+        Intent intent = new Intent(this, Diary.class);
+        intent.putExtra("Main", "yes");
+
+        intent.putExtra("Food", food);
+
+        intent.putExtra("Calories", calories);
+        //------------Date----------
+        intent.putExtra("Date", date);
+        //---------------------------
+        intent.putExtra("Count", num);
+
+
+        setResult(Diary.RESULT_OK, intent);
+
+
+        finish();
+
+
+        //startActivity(intent);
+        num++;
+
+
+
+    }
+
+    public void Cancel(View view) {
+        Intent intent = new Intent(this, Diary.class);
+        setResult(Diary.RESULT_CANCELED, intent);
+        finish();
+    }
+
+    public static String getString(Intent intent) {
+
+        return intent.getStringExtra("Food");
+
+    }
+    public static int getInt(Intent intent) {
+        return intent.getIntExtra("Calories", 0);
+    }
+
+    //-------------Date-----------
+    public static String getDate(Intent intent)
+    {
+        return intent.getStringExtra("Date");
+    }
+}
+    /*@Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case (MY_CHILD_ACTIVITY) : {
+                if (resultCode == Diary.RESULT_OK) {
+                    // TODO Extract the data returned from the child Activity.
+                    String returnValue = data.getStringExtra("some_key");
+                }
+                break;
+            }
+        }
+    }*/
+
+
+activity_food_entry.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.emily.a362first.FoodEntry">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/editText"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="Food Name:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView"
+        android:layout_alignBottom="@+id/editText"
+        android:layout_toLeftOf="@+id/editText"
+        android:layout_toStartOf="@+id/editText"
+        android:textSize="24sp" />
+
+    <TextView
+        android:text="Calories:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView2"
+        android:layout_toStartOf="@+id/editText"
+        android:textSize="24sp"
+        android:layout_toLeftOf="@+id/editText"
+        android:layout_alignBottom="@+id/editText2" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:layout_below="@+id/editText"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/editText2" />
+
+    <Button
+        android:text="Save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/button"
+        android:onClick="SaveData" />
+
+    <Button
+        android:text="Cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/button"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/cancel"
+        android:onClick="Cancel" />
+
+    <TextView
+        android:text="Date: "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView5"
+        android:textSize="24sp"
+        android:layout_toStartOf="@+id/editText2" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/editText3" />
+
+</RelativeLayout>
